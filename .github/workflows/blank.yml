@@ -1,0 +1,35 @@
+name: Auto Clone and Deploy Wiki
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 */6 * * *'  # 每6小时自动更新
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout current repo
+      uses: actions/checkout@v3
+    
+    - name: Clone target wiki
+      run: |
+        git clone https://git.lumine.io/mythiccraft/MythicMobs.wiki.git
+    
+    - name: Install Gollum
+      run: |
+        gem install gollum
+    
+    - name: Build static site
+      run: |
+        cd MythicMobs.wiki
+        # 可以使用 gollum 或转换为静态网页
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./MythicMobs.wiki
